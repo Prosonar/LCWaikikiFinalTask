@@ -11,20 +11,20 @@ namespace WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class BrandController : Controller
+    public class CategoryController : Controller
     {
-        IBrandService _brandService;
+        ICategoryService _categoryService;
 
-        public BrandController(IBrandService brandService)
+        public CategoryController(ICategoryService categoryService)
         {
-            _brandService = brandService;
+            _categoryService = categoryService;
         }
 
         [HttpGet("getall")]
         [Authorize(Roles = "Admin")]
         public IActionResult GetAll()
         {
-            var result = _brandService.GetBrands();
+            var result = _categoryService.GetCategories();
             if (result.Success)
             {
                 return Ok(result);
@@ -32,9 +32,9 @@ namespace WebApi.Controllers
             return BadRequest(result.Message);
         }
         [HttpPost]
-        public IActionResult Add(Brand brand)
+        public IActionResult Add(Category category)
         {
-            var result = _brandService.Add(brand);
+            var result = _categoryService.Add(category);
             if (result.Success)
             {
                 return Ok(result);
@@ -42,9 +42,9 @@ namespace WebApi.Controllers
             return BadRequest(result.Message);
         }
         [HttpDelete]
-        public IActionResult Delete(Brand brand)
+        public IActionResult Delete(Category category)
         {
-            var result = _brandService.Delete(brand);
+            var result = _categoryService.Delete(category);
             if (result.Success)
             {
                 return Ok(result);
@@ -52,9 +52,9 @@ namespace WebApi.Controllers
             return BadRequest(result.Message);
         }
         [HttpPut]
-        public IActionResult Update(Brand brand)
+        public IActionResult Update(Category category)
         {
-            var result = _brandService.Update(brand);
+            var result = _categoryService.Update(category);
             if (result.Success)
             {
                 return Ok(result);
