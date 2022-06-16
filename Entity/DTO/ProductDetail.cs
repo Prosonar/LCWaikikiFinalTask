@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Entity.Concrete
+namespace Entity.DTO
 {
-    public class Product : IEntity
+    class ProductDetail : IDto
     {
         public int Id { get; set; }
         public string Name { get; set; }
@@ -17,8 +17,8 @@ namespace Entity.Concrete
         public bool IsSold { get; set; }
         public bool CanOffer { get; set; }
         public string ImagePath { get; set; }
-        public int ColorId { get; set; }
-        public int BrandId { get; set; }
-        public int CategoryId { get; set; }
+        public string ColorName { get; set; }
+        public string BrandName { get; set; }
+        public string CategoryName { get; set; }
     }
 }
