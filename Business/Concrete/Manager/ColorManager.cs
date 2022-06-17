@@ -20,10 +20,12 @@ namespace Business.Concrete.Manager
     public class ColorManager : IColorService
     {
         private IColorDal _colorDal;
+        private IProductDal _productDal;
 
-        public ColorManager(IColorDal colorDal)
+        public ColorManager(IColorDal colorDal,IProductDal productDal)
         {
             _colorDal = colorDal;
+            _productDal = productDal;
         }
 
         [ValidationAspect(typeof(ColorValidator), Priority = 4)]
@@ -48,6 +50,11 @@ namespace Business.Concrete.Manager
 
             var result = ExceptionHandler.HandleWithNoReturn(() =>
             {
+                var products = _productDal.GetAll(x => x.ColorId == color.Id);
+                if (products.Count != 0)
+                {
+                    throw new Exception(Messages.ForeignKeyMessage);
+                }
                 _colorDal.Delete(color);
             });
             if (!result)

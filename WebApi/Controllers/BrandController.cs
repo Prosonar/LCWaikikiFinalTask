@@ -21,7 +21,7 @@ namespace WebApi.Controllers
         }
 
         [HttpGet("getall")]
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         public IActionResult GetAll()
         {
             var result = _brandService.GetBrands();
@@ -31,6 +31,19 @@ namespace WebApi.Controllers
             }
             return BadRequest(result.Message);
         }
+
+        [HttpGet("getbyid")]
+        [Authorize(Roles = "Admin")]
+        public IActionResult GetById(int brandId)
+        {
+            var result = _brandService.GetById(brandId);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result.Message);
+        }
+
         [HttpPost]
         public IActionResult Add(Brand brand)
         {

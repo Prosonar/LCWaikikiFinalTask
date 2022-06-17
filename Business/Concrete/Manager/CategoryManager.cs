@@ -21,10 +21,12 @@ namespace Business.Concrete.Manager
     public class CategoryManager : ICategoryService
     {
         private ICategoryDal _categoryDal;
+        private IProductDal _productDal;
 
-        public CategoryManager(ICategoryDal categoryDal)
+        public CategoryManager(ICategoryDal categoryDal,IProductDal productDal)
         {
             _categoryDal = categoryDal;
+            _productDal = productDal;
         }
 
         [ValidationAspect(typeof(CategoryValidator), Priority = 4)]
@@ -49,6 +51,11 @@ namespace Business.Concrete.Manager
 
             var result = ExceptionHandler.HandleWithNoReturn(() =>
             {
+                var products = _productDal.GetAll(x => x.CategoryId == category.Id);
+                if (products.Count != 0)
+                {
+                    throw new Exception(Messages.ForeignKeyMessage);
+                }
                 _categoryDal.Delete(category);
             });
             if (!result)

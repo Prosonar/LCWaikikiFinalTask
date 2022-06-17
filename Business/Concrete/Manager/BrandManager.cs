@@ -1,5 +1,6 @@
 ﻿using Business.Abstract.Services;
 using Business.BusinessAspects.Autofac;
+using Business.Utilities.Messages;
 using Business.ValidationRules.FluentValidation;
 using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Validation;
@@ -20,10 +21,12 @@ namespace Business.Concrete.Manager
     public class BrandManager : IBrandService
     {
         private IBrandDal _brandDal;
+        private IProductDal _productDal;
 
-        public BrandManager(IBrandDal brandDal)
+        public BrandManager(IBrandDal brandDal,IProductDal productDal)
         {
             _brandDal = brandDal;
+            _productDal = productDal;
         }
 
         [ValidationAspect(typeof(BrandValidator), Priority = 4)]
@@ -37,9 +40,9 @@ namespace Business.Concrete.Manager
             });
             if (!result)
             {
-                return new ErrorResult("");
+                return new ErrorResult(Messages.ErrorMessage);
             }
-            return new SuccessResult("");
+            return new SuccessResult(Messages.SuccessMessage);
         }
         [AuthAspect("admin", Priority = 5)]
         [CacheRemoveAspect("IBrandService.Get", Priority = 3)]
@@ -47,13 +50,18 @@ namespace Business.Concrete.Manager
         {
             var result = ExceptionHandler.HandleWithNoReturn(() =>
             {
+                var products = _productDal.GetAll(x => x.BrandId == brand.Id);
+                if(products.Count != 0)
+                {
+                    throw new Exception(Messages.ForeignKeyMessage);
+                }
                 _brandDal.Delete(brand);
             });
             if (!result)
             {
-                return new ErrorResult("");
+                return new ErrorResult(Messages.ErrorMessage);
             }
-            return new SuccessResult("");
+            return new SuccessResult(Messages.SuccessMessage);
         }
         [AuthAspect("admin", Priority = 5)]
         [CacheAspect]
@@ -65,9 +73,9 @@ namespace Business.Concrete.Manager
             }, filter);
             if (!result.Success)
             {
-                return new ErrorDataResult<List<Brand>>("");
+                return new ErrorDataResult<List<Brand>>(Messages.ErrorMessage);
             }
-            return new SuccessDataResult<List<Brand>>(_brandDal.GetAll(filter), "");
+            return new SuccessDataResult<List<Brand>>(_brandDal.GetAll(filter), Messages.SuccessMessage);
         }
         [AuthAspect("admin", Priority = 5)]
         [CacheAspect]
@@ -79,9 +87,9 @@ namespace Business.Concrete.Manager
             }, brandId);
             if (!result.Success)
             {
-                return new ErrorDataResult<Brand>("");
+                return new ErrorDataResult<Brand>(Messages.ErrorMessage);
             }
-            return new SuccessDataResult<Brand>(_brandDal.GetById(b => b.Id == brandId),"");
+            return new SuccessDataResult<Brand>(_brandDal.GetById(b => b.Id == brandId),Messages.SuccessMessage);
         }
 
         [ValidationAspect(typeof(BrandValidator), Priority = 4)]
@@ -95,9 +103,9 @@ namespace Business.Concrete.Manager
             });
             if (!result)
             {
-                return new ErrorResult("");
+                return new ErrorResult(Messages.ErrorMessage);
             }
-            return new SuccessResult("");
+            return new SuccessResult(Messages.SuccessMessage);
         }
     }
 }

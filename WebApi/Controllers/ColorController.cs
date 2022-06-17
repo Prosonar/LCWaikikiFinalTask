@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace WebApi.Controllers
 {
-    [Route("api/[controller]")]//route ayarları değişti.Meraktan yaptım.Action denen yere fonksiyonun ismi yazılırsa çalışır.
+    [Route("api/[controller]")]
     [ApiController]
     public class ColorController : ControllerBase
     {
@@ -28,6 +28,19 @@ namespace WebApi.Controllers
             }
             return BadRequest(result.Message);
         }
+
+        [HttpGet("getall")]
+        //[Authorize()]
+        public IActionResult GetById(int colorId)
+        {
+            var result = _colorService.GetById(colorId);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result.Message);
+        }
+
         [HttpPost("add")]
         public IActionResult Add(Color color)
         {
